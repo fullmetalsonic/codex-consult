@@ -65,3 +65,7 @@ mkdir -p ~/.claude/skills && cp -r codex-consult/skills/codex-consult ~/.claude/
 - 실행 단계는 Codex를 `--dangerously-bypass-approvals-and-sandbox`(샌드박스 없음, 승인 없음)로 실행해요. Codex가 PC에서 파일, 셸, 화면 조작을 자유롭게 할 수 있어요. 스킬이 금지 목록을 실행 계획에 넣어 막지만, 이는 지시일 뿐 기술적 차단은 아니에요. 믿을 수 있는 작업과 환경에서만 쓰세요.
 - 컴퓨터 유즈는 Codex 쪽 `computer_use` 기능이 켜져 있어야 해요(`codex features list`로 확인). Windows 11에서 메모장 조작으로 동작을 확인했어요.
 - 스킬 안의 일부 명령은 Windows Git Bash 기준(`cygpath`)이에요. macOS와 Linux에서는 그 부분을 생략하면 돼요.
+
+## 라이선스
+
+[MIT](LICENSE)
