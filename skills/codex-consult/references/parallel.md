@@ -18,7 +18,7 @@
   | 트랙 | Codex 트랙 검토 |
   |---|---|
   | Terra가 짠 코드·시험 코드 | Sol 6.2 (작성 모델과 다른 모델이 검토) |
-  | 정해진 기준의 대조·집계·문서 정리 | Terra (`-m gpt-6.1-terra -c model_reasoning_effort=ultra`) |
+  | 정해진 기준의 대조·집계·문서 정리 | Terra (`-m gpt-6.1-terra -c model_reasoning_effort=xhigh`) |
   | 단순 추출·형식 확인 | Codex 검토 생략, Claude 검토만 |
 
   Claude 트랙 검토는 모든 트랙에서 그대로 한다. 같은 트랙 안에서는 검토 등급을 섞지 않는다. 변경분 검토·완료 전 전체 검토 규칙(본문 ④)은 통합 검토 기준으로 적용한다.

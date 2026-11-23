@@ -61,19 +61,19 @@ Claude와 Codex가 **같은 원자료 → 각자 독립 의견 → 협의 → Co
 ## Codex 호출 방법
 
 ### 모델 선택 (호출마다 일의 종류로 고른다)
-아래 모델명은 **예시 설정**이다. 쓸 수 있는 모델과 추론 강도는 codex 설정·모델 목록에서 확인해 자기 환경에 맞게 바꾼다. 전역 기본 모델에 의존하지 않고 모든 호출에 모델을 명시한다.
+아래 모델명은 **예시 설정**이다. 쓸 수 있는 모델과 추론 강도는 `codex` 설정·모델 목록에서 확인해 자기 환경에 맞게 바꾼다. 전역 기본 모델에 의존하지 않고 모든 호출에 모델을 명시한다.
 
 | 모델·추론 | 이럴 때 | 명령에 붙일 것 |
 |---|---|---|
-| **GPT-6.2 Sol Ultra (협의)** | 기획·방향·설계·협의·독립 의견/검토(코드 검토 포함), 원인 분석·예외 해결·고위험 판단·최종 완료 판정 | `-m gpt-6.2-sol -c model_reasoning_effort=ultra` |
-| **GPT-6.1 Terra Ultra (코딩)** | 합의된 계획에 따른 코드·시험 코드 작성·수정과 그 실행·빌드·시험, 확정 절차의 시험·해시·회귀·수치 집계, 결과표·결과서 초안 | `-m gpt-6.1-terra -c model_reasoning_effort=ultra` |
+| **GPT-6.2 Sol xhigh (협의)** | 기획·방향·설계·협의·독립 의견/검토(코드 검토 포함), 원인 분석·예외 해결·고위험 판단·최종 완료 판정 | `-m gpt-6.2-sol -c model_reasoning_effort=xhigh` |
+| **GPT-6.1 Terra xhigh (실행·코딩)** | 합의된 계획에 따른 코드·시험 코드 작성·수정과 그 실행·빌드·시험, 확정 절차의 시험·해시·회귀·수치 집계, 결과표·결과서 초안 | `-m gpt-6.1-terra -c model_reasoning_effort=xhigh` |
 | **GPT-6 Luna Max** | 단순 요약·추출·분류(긴 로그에서 특정 줄 뽑기, 결과서 요약 등) | `-m gpt-6-luna -c model_reasoning_effort=max` |
 
-- 방향 결정, 독립 의견, 코드 검토, 원인 불명 문제는 **Sol 6.2**. 합의된 계획을 코드로 옮기고 돌리는 일은 **Terra**. 애매하면 Sol 6.2.
+- 방향 결정, 독립 의견, 코드 검토, 원인 불명 문제는 **Sol 6.2**. Codex에게 일을 시키는 실행(코드 작성·수정, 빌드·시험, 정해진 절차 수행)은 **Terra**. 의견·협의 쪽이 애매하면 Sol 6.2.
 - **Terra 코딩 조건:** 실행 계획에 목표·변경 범위(파일/모듈)·보존할 동작·통과/중단 조건이 있어야 한다. 계획에 넣는 문장: "Terra는 합의된 계획과 범위 안에서 코드·시험을 작성·수정하고 실행한다. 설계 변경·범위 확대·새 의존성 설치·원인 불명 실패·같은 실패 2회가 생기면 해당 단계를 멈추고 원자료(diff·오류 로그)와 함께 Sol에 인계한다. 0건과 미처리, 호출 수와 검사 대상 수를 구분해 보고한다."
 - Terra의 코드·결과서는 독립 검토나 최종 완료 판정이 아니다. Sol 6.2 검토는 Terra의 유효한 실행·시험 근거를 재사용하고 필요한 범위만 추가 검증한다.
 - Astra는 사용자가 명시할 때만 쓴다.
-- 고른 모델과 이유를 해당 프롬프트 파일 첫 줄에 적는다(예: `# 모델: Terra Ultra — 합의안 2단계 코드 수정`).
+- 고른 모델과 이유를 해당 프롬프트 파일 첫 줄에 적는다(예: `# 모델: Terra xhigh — 합의안 2단계 코드 수정`).
 - 같은 주제의 독립 의견과 코드 검토는 공정성을 위해 Sol 6.2로 한다.
 
 ### 병렬 처리
@@ -89,12 +89,12 @@ Claude와 Codex가 **같은 원자료 → 각자 독립 의견 → 협의 → Co
 
 **의견·검토 (읽기 전용, Sol 6.2):**
 ```bash
-codex exec -m gpt-6.2-sol -c model_reasoning_effort=ultra -s read-only --skip-git-repo-check -C "$WD" \
+codex exec -m gpt-6.2-sol -c model_reasoning_effort=xhigh -s read-only --skip-git-repo-check -C "$WD" \
   -o "<기록폴더>/round<N>-codex-<opinion|review>.md" - < "<기록폴더>/round<N>-codex-<opinion|review>-prompt.md" \
   > "<기록폴더>/round<N>-codex-<opinion|review>.log" 2>&1
 ```
 
-**실행 (전체 권한, 컴퓨터 유즈·브라우저 포함):** `--json`을 붙여 도구 호출(화면 조작 포함) 이벤트를 로그에 남긴다. `$MODEL_FLAGS`는 모델 선택 표에서 고른다(코딩은 Terra, 설계·원인 분석이 필요한 실행은 Sol 6.2).
+**실행 (전체 권한, 컴퓨터 유즈·브라우저 포함):** `--json`을 붙여 도구 호출(화면 조작 포함) 이벤트를 로그에 남긴다. `$MODEL_FLAGS`는 모델 선택 표에서 고른다(Codex에게 일을 시키는 실행은 Terra xhigh).
 ```bash
 codex exec $MODEL_FLAGS --json --dangerously-bypass-approvals-and-sandbox --skip-git-repo-check -C "$WD" \
   -o "<기록폴더>/round<N>-codex-result.md" - < "<기록폴더>/round<N>-exec-plan.md" \
@@ -102,7 +102,7 @@ codex exec $MODEL_FLAGS --json --dangerously-bypass-approvals-and-sandbox --skip
 ```
 
 **세션 이어가기 (같은 라운드 안에서만):**
-- 같은 라운드의 ② 입장 교환은 ①의 Codex 의견 세션을 이어간다: `codex exec resume "$(cat <기록폴더>/opinion-session-id.txt)" -m gpt-6.2-sol -c model_reasoning_effort=ultra -c 'sandbox_mode="read-only"' --skip-git-repo-check -o ... - < ...`. 자료를 다시 탐색하지 않게 하기 위함이다.
+- 같은 라운드의 ② 입장 교환은 ①의 Codex 의견 세션을 이어간다: `codex exec resume "$(cat <기록폴더>/opinion-session-id.txt)" -m gpt-6.2-sol -c model_reasoning_effort=xhigh -c 'sandbox_mode="read-only"' --skip-git-repo-check -o ... - < ...`. 자료를 다시 탐색하지 않게 하기 위함이다.
   - **`resume`은 `-s`를 받지 않고, 지정하지 않으면 전역 설정의 샌드박스(전체 권한일 수 있음)로 열린다.** 의견·검토 세션을 이어갈 때는 반드시 `-c 'sandbox_mode="read-only"'`를 붙이고, 로그의 `sandbox: read-only`를 확인한다.
 - 새 라운드의 ① 의견과 ④ 검토는 **새 세션**으로 시작한다(앞 판단에 끌려가지 않게, 독립성 유지). 단, 2라운드부터 ③ 실행은 직전 실행 세션을 이어가도 된다(맥락 유지가 도움될 때): `codex exec resume "$(cat <기록폴더>/exec-session-id.txt)" $MODEL_FLAGS --dangerously-bypass-approvals-and-sandbox --skip-git-repo-check -o ... - < ...`.
 - `--last`는 쓰지 않는다(다른 세션이 잡힐 수 있다). 이어가기가 실패하면 새 세션으로 한다.
